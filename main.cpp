@@ -26,10 +26,10 @@ int main()
 {
     cout << "let's do database things\n";
     string command = "";
-    Database database = new Database(true);
+    Database database = Database();
     while (true)
     {
         cin >> command;
-        database.evaluate(&command);
+        // database.evaluate(&command);
     }
 }
