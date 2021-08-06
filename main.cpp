@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <regex>
 #include "database.cpp"
 
 using namespace std;
@@ -27,9 +28,12 @@ int main()
     cout << "let's do database things\n";
     string command = "";
     Database database = Database();
-    while (true)
-    {
-        cin >> command;
-        // database.evaluate(&command);
-    }
+    // int lineno = 0;
+    // for (string line; getline(cin, line);)
+    // { // read into line buffer
+    //     ++lineno;
+    //     smatch matches;                       //matched strings go here
+    //     if (regex_search(line, matches, pat)) // search for pat in line
+    //         cout << lineno << ": " << matches[0] << '\n';
+    // }
 }

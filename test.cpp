@@ -1,61 +1,79 @@
 #include <string>
+#include <iostream>
 
-#include "database.cpp"
+#include "database.h"
 
 using namespace std;
 
-class TestCase
-{
-public:
-    string name;
-    bool run()
-    {
-        return false;
-    }
-    void setup() {}
-    void teardown() {}
-};
+// class TestCase
+// {
+// public:
+//     string name;
+//     bool run()
+//     {
+//         return false;
+//     }
+//     void setup() {}
+//     void teardown() {}
+// };
 
-class DBTestCase : public TestCase
-{
-public:
-    DBTestCase()
-    {
-        db = Database();
-    }
-    Database db;
+// class DBTestCase : public TestCase
+// {
+// public:
+//     DBTestCase()
+//     {
+//         db = Database();
+//     }
+//     Database db;
 
-private:
-};
+// private:
+// };
 
-class BasicReadWrite : public DBTestCase
+// class BasicReadWrite : public DBTestCase
+// {
+// public:
+//     string name = "basic read write";
+//     BasicReadWrite() : DBTestCase() {}
+//     bool run()
+//     {
+//         auto setOp = db.set("key", "value");
+//         // auto operation = db.get("key");
+//         cout << setOp.result;
+//         return setOp.result == OperationResult::success;
+//     }
+// };
+
+bool basicReadWrite()
 {
-public:
-    BasicReadWrite() : DBTestCase() {}
-    string name = "basic read write";
-    bool run()
-    {
-        db.set("key", "value");
-        OperationResult result = db.get("key");
-        return result.status == OperationResultStatus::success;
-    }
+    auto db = Database{};
+    auto setOp = db.set("test", "run");
+    return setOp.result == OperationResult::success;
 };
 
 int main()
 {
-    vector<TestCase> tests = vector<TestCase>{BasicReadWrite()};
-    bool allTestsPassed = true;
-    for (auto test : tests)
+    if (basicReadWrite())
     {
-        if (!test.run())
-        {
-            allTestsPassed = false;
-            cout << test.name + " failed";
-        }
-    };
-
-    if (allTestsPassed)
-    {
-        cout << "all tests passed";
+        cout << "success";
     }
+    else
+    {
+        cout << "fail";
+    }
+    // vector tests = vector<TestCase>{};
+    // bool allTestsPassed = true;
+    // for (auto test : tests)
+    // {
+    //     cout << test.name + "sdf";
+    //     if (!test.run())
+    //     {
+    //         allTestsPassed = false;
+    //         cout << test.name + " failed";
+    //     }
+    // };
+
+    // if (allTestsPassed)
+    // {
+    //     cout << "all tests passed";
+    // }
 }

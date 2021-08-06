@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -10,25 +12,80 @@ using namespace std;
  * We will need to make use of the filesystem to persist the data
  **/
 
-enum OperationResultStatus
+enum OperationResult
 {
     success,
     failure
 };
 
-struct OperationResult
+struct ReadOperation
 {
-    OperationResultStatus status;
+    OperationResult result;
     string value;
 };
+
+struct WriteOperation
+{
+    OperationResult result;
+};
+
+inline bool
+file_exists(string path)
+{
+    struct stat buf;
+    return (stat(path.c_str(), &buf) == 0);
+};
+
+inline vector<string> split(string &s, string delimiter)
+{
+    vector<string> result = vector<string>{};
+    size_t offset = 0;
+    while (true)
+    {
+        if (offset + delimiter.length() > s.length())
+        {
+            break;
+        }
+
+        size_t pos = s.find(delimiter, offset);
+
+        if (pos == string::npos)
+        {
+            break;
+        }
+
+        string piece = s.substr(offset, pos);
+        result.push_back(piece);
+        offset += pos + delimiter.length();
+    }
+    return result;
+}
 
 class Database
 {
 public:
-    Database()
-    {
-        writing = false;
-    }
+    Database() {}
+    // bool connect(string name, ios_base::openmode mode)
+    // {
+    //     if (!file_exists(name))
+    //     {
+    //         ofstream file(name);
+    //         file.close();
+    //     }
+    //     fstream disk;
+    //     disk.open(name, mode = ios::in);
+    //     // disk_ostream.open(name, ios::out);
+    //     // disk_istream.open(name, ios::in);
+
+    //     this.disk = &disk;
+
+    //     if (!disk.good())
+    //     {
+    //         return false;
+    //     };
+
+    //     return true;
+    // }
     // return the number of entries
     int size()
     {
@@ -45,34 +102,55 @@ public:
         return result;
     }
     // set entry
-    OperationResult set(string key, string value)
+    WriteOperation set(string key, string value)
     {
-        OperationResult result;
-        return result;
+        WriteOperation operation;
+        if (!file_exists("disk"))
+        {
+            ofstream file("disk");
+            file.close();
+        }
+
+        fstream disk;
+
+        disk.open("disk", ios::in);
+
+        disk.seekg(0);
+        string line;
+        while (disk)
+        {
+            getline(disk, line);
+            auto pair = split(line, "=");
+            if (pair.size() < 2)
+            {
+                continue;
+            }
+            if (pair[0] == key)
+            {
+                operation.result = OperationResult::success;
+            }
+        }
+        if (!operation.result != OperationResult::success)
+        {
+            operation.result = OperationResult::failure;
+        }
+        return operation;
     }
 
     // destructor
-    ~Database() {}
-
-    // Database(bool start_immediately) : running{start_immediately} {}
-    // void evaluate(string *command)
+    // ~Database()
     // {
-    //     if (command == nullptr)
+    //     if (connected)
     //     {
-    //         return;
-    //     }
-    //     if (*command == "get")
-    //     {
-    //         cout << "get command\n";
-    //     }
-
-    //     if (*command == "set")
-    //     {
-    //         cout << "set command\n";
-    //     }
-    // };
+    //         disk_istream.close();
+    //         disk_ostream.close();
+    //     };
+    // }
 
 private:
     // a write operation is taking place
-    bool writing;
+    bool writing = false;
+    bool connected = false;
+    // ifstream disk_istream;
+    // ofstream disk_ostream;
 };
