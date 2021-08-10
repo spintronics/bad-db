@@ -26,7 +26,7 @@ inline vector<string> split(string &s, string delimiter);
 class Database
 {
 public:
-    Database(){};
+    Database();
     int size();
     void purge();
     OperationResult get(string key);

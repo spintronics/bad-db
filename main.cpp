@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <regex>
-#include "database.cpp"
+#include "database.h"
 
 using namespace std;
 
@@ -28,6 +28,13 @@ int main()
     cout << "let's do database things\n";
     string command = "";
     Database database = Database();
+
+    WriteOperation what = database.set("key", "value");
+    if (what.result == success)
+        cout << "success" << endl;
+    else
+        cout << "failure" << endl;
+
     // int lineno = 0;
     // for (string line; getline(cin, line);)
     // { // read into line buffer
