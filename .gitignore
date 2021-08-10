@@ -1,2 +1,6 @@
 .vscode
 *.exe
+.DS_Store
+a.out.dSYM/Contents/Info.plist
+a.out.dSYM/Contents/Resources/DWARF/a.out
+a.out

@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <sys/stat.h>
+#include "database.h"
 
 using namespace std;
 
@@ -11,23 +12,6 @@ using namespace std;
  * 
  * We will need to make use of the filesystem to persist the data
  **/
-
-enum OperationResult
-{
-    success,
-    failure
-};
-
-struct ReadOperation
-{
-    OperationResult result;
-    string value;
-};
-
-struct WriteOperation
-{
-    OperationResult result;
-};
 
 inline bool
 file_exists(string path)
@@ -61,96 +45,86 @@ inline vector<string> split(string &s, string delimiter)
     return result;
 }
 
-class Database
+
+Database::Database() {}
+// bool connect(string name, ios_base::openmode mode)
+// {
+//     if (!file_exists(name))
+//     {
+//         ofstream file(name);
+//         file.close();
+//     }
+//     fstream disk;
+//     disk.open(name, mode = ios::in);
+//     // disk_ostream.open(name, ios::out);
+//     // disk_istream.open(name, ios::in);
+
+//     this.disk = &disk;
+
+//     if (!disk.good())
+//     {
+//         return false;
+//     };
+
+//     return true;
+// }
+// return the number of entries
+int Database::size()
 {
-public:
-    Database() {}
-    // bool connect(string name, ios_base::openmode mode)
-    // {
-    //     if (!file_exists(name))
-    //     {
-    //         ofstream file(name);
-    //         file.close();
-    //     }
-    //     fstream disk;
-    //     disk.open(name, mode = ios::in);
-    //     // disk_ostream.open(name, ios::out);
-    //     // disk_istream.open(name, ios::in);
-
-    //     this.disk = &disk;
-
-    //     if (!disk.good())
-    //     {
-    //         return false;
-    //     };
-
-    //     return true;
-    // }
-    // return the number of entries
-    int size()
+    return 0;
+}
+// remove all entries
+void Database::purge()
+{
+}
+// get entry
+OperationResult Database::get(string key)
+{
+    OperationResult result;
+    return result;
+}
+// set entry
+WriteOperation Database::set(string key, string value)
+{
+    WriteOperation operation;
+    if (!file_exists("disk"))
     {
-        return 0;
+        ofstream file("disk");
+        file.close();
     }
-    // remove all entries
-    void purge()
+
+    fstream disk;
+
+    disk.open("disk", ios::in);
+
+    disk.seekg(0);
+    string line;
+    while (disk)
     {
-    }
-    // get entry
-    OperationResult get(string key)
-    {
-        OperationResult result;
-        return result;
-    }
-    // set entry
-    WriteOperation set(string key, string value)
-    {
-        WriteOperation operation;
-        if (!file_exists("disk"))
+        getline(disk, line);
+        auto pair = split(line, "=");
+        if (pair.size() < 2)
         {
-            ofstream file("disk");
-            file.close();
+            continue;
         }
-
-        fstream disk;
-
-        disk.open("disk", ios::in);
-
-        disk.seekg(0);
-        string line;
-        while (disk)
+        if (pair[0] == key)
         {
-            getline(disk, line);
-            auto pair = split(line, "=");
-            if (pair.size() < 2)
-            {
-                continue;
-            }
-            if (pair[0] == key)
-            {
-                operation.result = OperationResult::success;
-            }
+            operation.result = OperationResult::success;
         }
-        if (!operation.result != OperationResult::success)
-        {
-            operation.result = OperationResult::failure;
-        }
-        return operation;
     }
+    if (operation.result != OperationResult::success)
+    {
+        operation.result = OperationResult::failure;
+    }
+    return operation;
+}
 
-    // destructor
-    // ~Database()
-    // {
-    //     if (connected)
-    //     {
-    //         disk_istream.close();
-    //         disk_ostream.close();
-    //     };
-    // }
-
-private:
-    // a write operation is taking place
-    bool writing = false;
-    bool connected = false;
-    // ifstream disk_istream;
-    // ofstream disk_ostream;
-};
+// destructor
+// ~Database()
+// {
+//     if (connected)
+//     {
+//         disk_istream.close();
+//         disk_ostream.close();
+//     };
+// }
